@@ -2,7 +2,63 @@
     this is where you will add your JavaScript to complete Lab 5
 */
 
-$(pageLoad);
+
+$(function() {
+    var arr = Employees.entries;
+    sortObjArray(arr, 'last');
+    render(arr);
+
+    $('.sort-ui .btn').popover({
+        content: function(){
+            return 'Click to Resort by ' + $(this).html();
+        },
+        container: 'body',
+        trigger: 'hover',
+        placement: 'bottom'
+    });
+});
+
+
+
+function render(entries){
+    var template = $('.template');
+    var address = $('.address-book');
+    var footer = $('.foot');
+    address.hide();
+    footer.hide();
+    address.empty();
+
+    var instance;
+
+    $.each(Employees.entries, function(){
+       instance = template.clone();
+       for (prop in this) {
+            if (prop === 'pic') {
+                instance.find('.pic').attr({
+                    src: this[prop],
+                    alt: 'Picture of ' + this[prop]
+                });
+            } else { 
+                instance.find('.' + prop).html(this[prop]);
+        }
+
+        instance.removeClass('template');
+        address.append(instance);
+	   }
+	});
+    address.fadeIn(1000);
+    footer.fadeIn(1000);    
+}
+
+$('.sort-ui .btn').click(buttonPush);
+function buttonPush(){
+    var sortBtn = $(this);
+    var buttonName = sortBtn.attr('data-sortby');
+    sortObjArray(Employees.entries, buttonName);
+    $('.btn').removeClass('active');
+    sortBtn.addClass('active');
+    render(Employees.entries);
+}
 
 function sortObjArray(objArray, propName) {
     if (!objArray.sort)
@@ -24,51 +80,6 @@ function sortObjArray(objArray, propName) {
     });
 } //sortObjArray()
 
-
-
-function pageLoad(){
-    var arr = Employees.entries;
-    sortObjArray(arr, 'last');
-    render(arr);
-}
-
-function render(entries){
-    var template = $('.template');
-    var address = $('.address-book');
-    address.empty();
-
-    var instance;
-
-    $.each(Employees.entries, function(){
-       instance = template.clone();
-       for (prop in this) {
-            if (prop === 'pic') {
-                instance.find('.pic').attr({
-                    src: this[prop],
-                    alt: 'Picture of ' + this[prop]
-                });
-            } else { 
-                instance.find('.' + prop).html(this[prop]);
-        }
-
-        instance.removeClass('template');
-        address.append(instance);
-	   }
-	});
-        
-}
-
-$('.sort-ui .btn').click(buttonPush);
-function buttonPush(){
-    var sortBtn = $(this);
-    var buttonName = sortBtn.attr('data-sortby');
-    sortObjArray(Employees.entries, buttonName);
-    $('.btn').removeClass('active');
-    sortBtn.addClass('active');
-    render(Employees.entries);
-}
-
-
 /* sortObjArray()
     sorts an array of objects by a given property name
     the property values are compared using standard 
@@ -80,16 +91,3 @@ function buttonPush(){
 
     returns undefined (array is sorted in place)
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
